@@ -1,0 +1,89 @@
+// Classe principal para rodar o simulador
+public class Main {
+    public static void main(String[] args) {
+        Hidrometro hidrometro = new Hidrometro();
+        
+        // Configura a vazão inicial (ex: 350 m³/h)
+        hidrometro.configurarVazao(350);
+
+        // Inicia o funcionamento
+        hidrometro.iniciar();
+
+        // Simula por alguns segundos
+        try {
+            Thread.sleep(5000); // roda por 5 segundos
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Para o funcionamento
+        hidrometro.parar();
+    }
+}
+// Classe Hidrometro
+public class Hidrometro {
+    private AguaFluxo fluxo;
+    private Display display;
+    private boolean ativo;
+
+    public Hidrometro() {
+        this.fluxo = new AguaFluxo();
+        this.display = new Display();
+        this.ativo = false;
+    }
+
+    public void configurarVazao(double v) {
+        fluxo.setTaxa(v);
+    }
+
+    public void iniciar() {
+        ativo = true;
+        System.out.println("Simulador de Hidrômetro iniciado...");
+        new Thread(() -> {
+            while (ativo) {
+                double aguaPassando = fluxo.simularFluxo();
+                display.mostrarValor(aguaPassando);
+
+                try {
+                    Thread.sleep(1000); // atualiza a cada 1 segundo
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void parar() {
+        ativo = false;
+        System.out.println("Simulador de Hidrômetro parado.");
+    }
+}
+// Classe AguaFluxo
+public class AguaFluxo {
+    private double taxa; // m³/h
+
+    public void setTaxa(double taxa) {
+        this.taxa = taxa;
+    }
+
+    // Simula fluxo de água em m³ por segundo
+    public double simularFluxo() {
+        if (taxa <= 0) {
+            System.out.println("Sem água passando no hidrômetro!");
+            return 0.0;
+        }
+        // conversão de m³/h para m³/s
+        double vazaoPorSegundo = taxa / 3600.0;
+        return vazaoPorSegundo;
+    }
+}
+// Classe Display
+public class Display {
+    private double totalAgua;
+
+    public void mostrarValor(double quantidade) {
+        totalAgua += quantidade;
+        System.out.printf("Fluxo atual: %.4f m³ | Total acumulado: %.4f m³%n",
+                          quantidade, totalAgua);
+    }
+}
