@@ -1,70 +1,56 @@
-# 💧 Simulador de Hidrômetro (POO em Java)
+# 💧 Simulador de Hidrômetro em Java (Swing)
 
-Este projeto implementa um **simulador de hidrômetro** utilizando Programação Orientada a Objetos em **Java**.  
-Ele foi desenvolvido como parte de um exercício acadêmico e representa a **primeira versão** do sistema.
-
----
-
-## 📌 Funcionalidades
-
-- Configuração da **vazão de água** (em m³/h).  
-- Simulação de fluxo de água em **tempo real**.  
-- Conversão automática de **m³/h para m³/s**.  
-- Exibição contínua em **display** com:
-  - Fluxo atual (m³ por segundo).  
-  - Total acumulado de água medida.  
-- Funcionamento contínuo (24h) até ser interrompido.
+Este projeto implementa um **simulador digital de hidrômetro** em **Java**, utilizando **POO** e **Swing** para interface gráfica.  
+O objetivo é reproduzir o funcionamento de um medidor de água em tempo real, de forma contínua, sem depender de hardware físico.
 
 ---
 
-## 📂 Estrutura do Projeto
+## 🚀 Funcionalidades
 
-```
-
-src/
-├── Main.java           # Classe principal para executar o simulador
-├── Hidrometro.java     # Controla a simulação e coordena os componentes
-├── AguaFluxo.java      # Responsável por simular a vazão de água
-└── Display.java        # Exibe os valores de fluxo e acumulado
-
-````
+- Simulação **ininterrupta** do fluxo de água.
+- Exibição da **vazão (m³/h)** e do **volume acumulado (m³)** em tempo real.
+- Interface gráfica em **Swing**, estilo display digital.
+- Atualização automática a cada **1 segundo**.
+- Encerramento apenas quando o usuário fecha a janela.
 
 ---
 
-## ▶️ Como Executar
+## 📸 Demonstração
+
+A interface exibe:
+
+Vazão: 100.00 m³/h
+Volume acumulado: 0.027 m³
+
+
+Os valores são atualizados automaticamente conforme o tempo passa.
+
+---
+
+## 🛠️ Tecnologias utilizadas
+
+- **Java 8+**
+- **Swing** (GUI)
+- **POO** (Programação Orientada a Objetos)
+
+---
+
+## 📂 Estrutura do Código
+
+- `FluxoAgua.java` → Classe que simula o fluxo de água.
+- `HidrometroSwing.java` → Interface gráfica em Swing + controle da simulação.
+
+---
+
+## ▶️ Como executar
 
 1. Compile os arquivos:
 
 ```bash
-javac *.java
-````
+javac HidrometroSwing.java
 
-2. Execute o programa:
+Execute o programa:
 
-```bash
-java Main
-```
+java HidrometroSwing
 
-3. Exemplo de saída no console:
-
-```
-Simulador de Hidrômetro iniciado...
-Fluxo atual: 0.0972 m³ | Total acumulado: 0.0972 m³
-Fluxo atual: 0.0972 m³ | Total acumulado: 0.1944 m³
-Fluxo atual: 0.0972 m³ | Total acumulado: 0.2916 m³
-...
-```
-
----
-
-## 📅 Roadmap
-
-* [x] Primeira versão: Simulação básica (configuração de vazão, display e fluxo).
-* [ ] Segunda versão: Geração de imagens a cada m³.
----
-
-## 👨‍💻 Autor - Osmar dos Santos Filho
-
-* Projeto acadêmico desenvolvido em **POO - Java**.
-* Criado para estudo de **modelagem UML** e simulação de sistemas.
-
+A janela será aberta e o hidrômetro rodará sem parar até você fechar a aplicação.
