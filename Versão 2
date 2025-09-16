@@ -1,7 +1,12 @@
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import javax.imageio.ImageIO;
 
 // Classe que representa o fluxo de água
 class FluxoAgua {
@@ -34,7 +39,7 @@ class FluxoAgua {
     }
 }
 
-// Classe que exibe dados no "display"
+// Classe que exibe dados no "display" (console)
 class Display {
     public void mostrar(FluxoAgua fluxo) {
         System.out.printf("Vazão atual: %.2f m³/h | Acumulado: %.3f m³%n",
@@ -55,16 +60,40 @@ class Relatorio {
     }
 }
 
-// Classe que gera uma "imagem" (simulada por arquivo de texto)
+// Classe que gera imagem PNG a cada m³
 class GeradorImagem {
     private int contador = 0;
 
     public void gerar(double volume) {
         contador++;
-        String nomeArquivo = "imagem_" + contador + ".txt";
-        try (FileWriter fw = new FileWriter(nomeArquivo)) {
-            fw.write("Imagem simulada do hidrômetro\n");
-            fw.write("Volume: " + String.format("%.3f m³", volume));
+        String nomeArquivo = "hidrometro_" + contador + ".png";
+
+        int largura = 400;
+        int altura = 200;
+
+        BufferedImage img = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = img.createGraphics();
+
+        // Fundo
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, largura, altura);
+
+        // Texto principal
+        g2d.setColor(Color.BLUE);
+        g2d.setFont(new Font("Arial", Font.BOLD, 20));
+        g2d.drawString("Simulação de Hidrômetro", 50, 50);
+
+        g2d.setColor(Color.BLACK);
+        g2d.setFont(new Font("Consolas", Font.PLAIN, 18));
+        g2d.drawString("Volume acumulado:", 50, 100);
+        g2d.setFont(new Font("Consolas", Font.BOLD, 22));
+        g2d.drawString(String.format("%.3f m³", volume), 220, 100);
+
+        g2d.dispose();
+
+        try {
+            ImageIO.write(img, "png", new File(nomeArquivo));
+            System.out.println("Imagem gerada: " + nomeArquivo);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,22 +110,22 @@ public class HidrometroSimulador {
 
         double ultimoVolume = 0;
 
-        // Simula 60 segundos
-        for (int t = 0; t < 60; t++) {
+        System.out.println("Simulação iniciada. Pressione CTRL+C para parar.");
+
+        // Simulação contínua (loop infinito)
+        while (true) {
             fluxo.simularSegundos(1);
             display.mostrar(fluxo);
             relatorio.salvar(fluxo.getAcumulado());
 
-            // a cada 1 m³ gera uma nova imagem
+            // a cada 1 m³ acumulado gera uma imagem
             if ((int) fluxo.getAcumulado() > (int) ultimoVolume) {
                 geradorImagem.gerar(fluxo.getAcumulado());
             }
 
             ultimoVolume = fluxo.getAcumulado();
 
-            Thread.sleep(500); // meio segundo para simulação mais lenta
+            Thread.sleep(1000); // 1 segundo = simulação em tempo real
         }
-
-        System.out.println("Simulação encerrada.");
     }
 }
