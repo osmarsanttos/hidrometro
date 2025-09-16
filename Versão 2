@@ -1,0 +1,102 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+// Classe que representa o fluxo de água
+class FluxoAgua {
+    private double vazao; // m³/h
+    private double acumulado; // m³
+
+    public FluxoAgua(double vazaoInicial) {
+        this.vazao = vazaoInicial;
+        this.acumulado = 0;
+    }
+
+    public void setVazao(double vazao) {
+        this.vazao = vazao;
+    }
+
+    public double getVazao() {
+        return vazao;
+    }
+
+    public double getAcumulado() {
+        return acumulado;
+    }
+
+    // Simula passagem de tempo em segundos
+    public void simularSegundos(int segundos) {
+        if (vazao > 0) {
+            double m3PorSegundo = vazao / 3600.0; // converte de m³/h para m³/s
+            acumulado += m3PorSegundo * segundos;
+        }
+    }
+}
+
+// Classe que exibe dados no "display"
+class Display {
+    public void mostrar(FluxoAgua fluxo) {
+        System.out.printf("Vazão atual: %.2f m³/h | Acumulado: %.3f m³%n",
+                fluxo.getVazao(), fluxo.getAcumulado());
+    }
+}
+
+// Classe responsável por gerar relatório em arquivo
+class Relatorio {
+    public void salvar(double volume) {
+        try (FileWriter fw = new FileWriter("relatorio.txt", true)) {
+            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String dataHora = LocalDateTime.now().format(dtf);
+            fw.write(dataHora + " - Volume acumulado: " + String.format("%.3f m³", volume) + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// Classe que gera uma "imagem" (simulada por arquivo de texto)
+class GeradorImagem {
+    private int contador = 0;
+
+    public void gerar(double volume) {
+        contador++;
+        String nomeArquivo = "imagem_" + contador + ".txt";
+        try (FileWriter fw = new FileWriter(nomeArquivo)) {
+            fw.write("Imagem simulada do hidrômetro\n");
+            fw.write("Volume: " + String.format("%.3f m³", volume));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// Classe principal que orquestra tudo
+public class HidrometroSimulador {
+    public static void main(String[] args) throws InterruptedException {
+        FluxoAgua fluxo = new FluxoAgua(100); // vazão inicial em m³/h
+        Display display = new Display();
+        Relatorio relatorio = new Relatorio();
+        GeradorImagem geradorImagem = new GeradorImagem();
+
+        double ultimoVolume = 0;
+
+        // Simula 60 segundos
+        for (int t = 0; t < 60; t++) {
+            fluxo.simularSegundos(1);
+            display.mostrar(fluxo);
+            relatorio.salvar(fluxo.getAcumulado());
+
+            // a cada 1 m³ gera uma nova imagem
+            if ((int) fluxo.getAcumulado() > (int) ultimoVolume) {
+                geradorImagem.gerar(fluxo.getAcumulado());
+            }
+
+            ultimoVolume = fluxo.getAcumulado();
+
+            Thread.sleep(500); // meio segundo para simulação mais lenta
+        }
+
+        System.out.println("Simulação encerrada.");
+    }
+}
