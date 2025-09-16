@@ -1,17 +1,11 @@
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import javax.imageio.ImageIO;
+import java.text.DecimalFormat;
 
 // Classe que representa o fluxo de água
 class FluxoAgua {
-    private double vazao; // m³/h
-    private double acumulado; // m³
+    private double vazao;      // m³/h
+    private double acumulado;  // m³
 
     public FluxoAgua(double vazaoInicial) {
         this.vazao = vazaoInicial;
@@ -39,93 +33,49 @@ class FluxoAgua {
     }
 }
 
-// Classe que exibe dados no "display" (console)
-class Display {
-    public void mostrar(FluxoAgua fluxo) {
-        System.out.printf("Vazão atual: %.2f m³/h | Acumulado: %.3f m³%n",
-                fluxo.getVazao(), fluxo.getAcumulado());
+// Interface gráfica
+public class HidrometroSwing extends JFrame {
+    private final JLabel lblVazao;
+    private final JLabel lblVolume;
+    private final FluxoAgua fluxo;
+    private final DecimalFormat df2 = new DecimalFormat("0.00");
+    private final DecimalFormat df3 = new DecimalFormat("0.000");
+
+    public HidrometroSwing() {
+        setTitle("Simulador de Hidrômetro");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(2, 1));
+
+        // Instancia fluxo de água com vazão inicial
+        fluxo = new FluxoAgua(100); // m³/h inicial
+
+        // Configura labels
+        lblVazao = new JLabel("Vazão: 0.00 m³/h", SwingConstants.CENTER);
+        lblVolume = new JLabel("Volume acumulado: 0.000 m³", SwingConstants.CENTER);
+
+        lblVazao.setFont(new Font("Consolas", Font.BOLD, 20));
+        lblVolume.setFont(new Font("Consolas", Font.BOLD, 20));
+
+        add(lblVazao);
+        add(lblVolume);
+
+        // Timer Swing para atualizar a cada 1 segundo
+        Timer timer = new Timer(1000, e -> atualizar());
+        timer.start();
     }
-}
 
-// Classe responsável por gerar relatório em arquivo
-class Relatorio {
-    public void salvar(double volume) {
-        try (FileWriter fw = new FileWriter("relatorio.txt", true)) {
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String dataHora = LocalDateTime.now().format(dtf);
-            fw.write(dataHora + " - Volume acumulado: " + String.format("%.3f m³", volume) + "\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // Atualiza a simulação e os labels
+    private void atualizar() {
+        fluxo.simularSegundos(1); // simula passagem de 1 segundo
+        lblVazao.setText("Vazão: " + df2.format(fluxo.getVazao()) + " m³/h");
+        lblVolume.setText("Volume acumulado: " + df3.format(fluxo.getAcumulado()) + " m³");
     }
-}
 
-// Classe que gera imagem PNG a cada m³
-class GeradorImagem {
-    private int contador = 0;
-
-    public void gerar(double volume) {
-        contador++;
-        String nomeArquivo = "hidrometro_" + contador + ".png";
-
-        int largura = 400;
-        int altura = 200;
-
-        BufferedImage img = new BufferedImage(largura, altura, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = img.createGraphics();
-
-        // Fundo
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect(0, 0, largura, altura);
-
-        // Texto principal
-        g2d.setColor(Color.BLUE);
-        g2d.setFont(new Font("Arial", Font.BOLD, 20));
-        g2d.drawString("Simulação de Hidrômetro", 50, 50);
-
-        g2d.setColor(Color.BLACK);
-        g2d.setFont(new Font("Consolas", Font.PLAIN, 18));
-        g2d.drawString("Volume acumulado:", 50, 100);
-        g2d.setFont(new Font("Consolas", Font.BOLD, 22));
-        g2d.drawString(String.format("%.3f m³", volume), 220, 100);
-
-        g2d.dispose();
-
-        try {
-            ImageIO.write(img, "png", new File(nomeArquivo));
-            System.out.println("Imagem gerada: " + nomeArquivo);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-// Classe principal que orquestra tudo
-public class HidrometroSimulador {
-    public static void main(String[] args) throws InterruptedException {
-        FluxoAgua fluxo = new FluxoAgua(100); // vazão inicial em m³/h
-        Display display = new Display();
-        Relatorio relatorio = new Relatorio();
-        GeradorImagem geradorImagem = new GeradorImagem();
-
-        double ultimoVolume = 0;
-
-        System.out.println("Simulação iniciada. Pressione CTRL+C para parar.");
-
-        // Simulação contínua (loop infinito)
-        while (true) {
-            fluxo.simularSegundos(1);
-            display.mostrar(fluxo);
-            relatorio.salvar(fluxo.getAcumulado());
-
-            // a cada 1 m³ acumulado gera uma imagem
-            if ((int) fluxo.getAcumulado() > (int) ultimoVolume) {
-                geradorImagem.gerar(fluxo.getAcumulado());
-            }
-
-            ultimoVolume = fluxo.getAcumulado();
-
-            Thread.sleep(1000); // 1 segundo = simulação em tempo real
-        }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            HidrometroSwing tela = new HidrometroSwing();
+            tela.setVisible(true);
+        });
     }
 }
