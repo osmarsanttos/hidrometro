@@ -190,7 +190,7 @@ public class HidrometroSwing extends JFrame
         // Inicialização do título da janela e tamanho
         setTitle("Display do Hidrômetro");
         setSize(500, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null); // Centraliza a janela
         
         // Carregamento das imagens
