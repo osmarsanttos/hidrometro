@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Scanner;
 import javax.imageio.ImageIO;
 
 // Definição da Classe do Hidrômetro
@@ -295,16 +294,34 @@ public class HidrometroSwing extends JFrame
 
     public static void main(String[] args) 
     {
-        // Main para rodar o algoritmo
+        // Detecta o sistema operacional
+        String os = System.getProperty("os.name").toLowerCase();
+        Interface uiImpl;
 
-        // Recebe a quantidade de hidrômetros que se deseja exibir
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Digite a quantidade de hidrômetros (1-5): ");
-        int quantidade = scanner.nextInt();
-        
-        // Trata os dados para evitar erros
-        if (quantidade < 1) quantidade = 1;
-        if (quantidade > 5) quantidade = 5;
+        // Define a implementação de acordo com o SO
+        if (os.contains("win")) 
+        {
+            uiImpl = new WindowsUI();
+        } 
+        else if (os.contains("mac")) 
+        {
+            uiImpl = new MacUI();
+        } 
+        else 
+        {
+            uiImpl = new WindowsUI(); // padrão genérico
+        }
+
+        // Usa o bridge
+        UIBridge ui = new UIBridge(uiImpl);
+
+        // Entrada de dados via janela
+        String entrada = ui.receberEntrada("Digite a quantidade de hidrômetros (1-5):");
+        int quantidade = Integer.parseInt(entrada);
+
+        // Mostra mensagem de confirmação
+        ui.mostrarMensagem("Quantidade informada: " + quantidade);
+
         
         for (int i = 0; i < quantidade; i++) 
         {
@@ -323,7 +340,6 @@ public class HidrometroSwing extends JFrame
                 tela.setVisible(true);
             });
         }
-        
-        scanner.close();
+    
     }
 }
