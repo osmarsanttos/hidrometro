@@ -58,7 +58,7 @@ javac -cp "lib/gson-2.11.0.jar" -d bin src/*.java
 3. Execute o programa:
 
 ```bash
-java -cp "bin;lib/gson-2.11.0.jar" src.HidrometroSwing
+java -cp "bin;lib/gson-2.11.0.jar" src.Cliente
 ```
 
 4. Digite o número de hidrômetros que o usuário deseja que sejam executados.

@@ -11,4 +11,10 @@ public class HidrometroConfig
     public double getVelmediaFluxoAgua() { return velmediaFluxoAgua; }
     public int getTempoSimulacao() {return tempoSimulacao; }
     
+    public void configSetada(double dE, double vmFA, int tS)
+    {
+        diametroEntrada = dE;
+        velmediaFluxoAgua = vmFA;
+        tempoSimulacao = tS;
+    }
 }

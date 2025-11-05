@@ -184,6 +184,11 @@ public class HidrometroSwing extends JFrame
 
     private DisplayPanel panel;
 
+    public JPanel getDisplayPanel() 
+    {
+        return panel;
+    }
+
     public HidrometroSwing() 
     {
         // Inicialização do título da janela e tamanho
@@ -290,56 +295,5 @@ public class HidrometroSwing extends JFrame
         fluxo.atualizar(hora, diametroEntrada, velmediaFluxoAgua);
         SwingUtilities.invokeLater(panel::repaint);
         hora++;
-    }
-
-    public static void main(String[] args) 
-    {
-        // Detecta o sistema operacional
-        String os = System.getProperty("os.name").toLowerCase();
-        Interface uiImpl;
-
-        // Define a implementação de acordo com o SO
-        if (os.contains("win")) 
-        {
-            uiImpl = new WindowsUI();
-        } 
-        else if (os.contains("mac")) 
-        {
-            uiImpl = new MacUI();
-        } 
-        else 
-        {
-            uiImpl = new WindowsUI(); // padrão genérico
-        }
-
-        // Usa o bridge
-        UIBridge ui = new UIBridge(uiImpl);
-
-        // Entrada de dados via janela
-        String entrada = ui.receberEntrada("Digite a quantidade de hidrômetros (1-5):");
-        int quantidade = Integer.parseInt(entrada);
-
-        // Mostra mensagem de confirmação
-        ui.mostrarMensagem("Quantidade informada: " + quantidade);
-
-        
-        for (int i = 0; i < quantidade; i++) 
-        {
-            final int qtde = i + 1;
-            final String configPath = "./config/config" + qtde + ".json";
-            
-            SwingUtilities.invokeLater(() -> {
-                // Carrega config específica pra cada hidrômetro
-                HidrometroConfig cfg = Config.lerConfig(configPath);
-                
-                // Constrói o hidrômetro propriamente dito
-                HidrometroSwing tela = new HidrometroSwing();
-                tela.setTitle("Hidrômetro " + qtde);
-                tela.applyConfig(cfg);
-                tela.setLocation(200 * qtde, 100 * qtde);
-                tela.setVisible(true);
-            });
-        }
-    
     }
 }
