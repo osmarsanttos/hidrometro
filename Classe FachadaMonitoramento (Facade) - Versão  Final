@@ -1,0 +1,48 @@
+import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * Fachada do Painel de Monitoramento de Hidrômetros (PMH).
+ * Implementa o padrão Facade para simplificar a interface de acesso aos subsistemas.
+ */
+public class FachadaMonitoramento {
+    // Referências aos subsistemas internos [cite: 65, 66]
+    private GerenciadorUsuarios gerenciadorUsuarios;
+    private MonitoradorConsumo monitoradorConsumo;
+    private ProcessadorImagens processadorImagens;
+    private LoggerSystem logger; // Singleton
+
+    // O construtor inicializa todos os subsistemas
+    public FachadaMonitoramento() {
+        this.gerenciadorUsuarios = new GerenciadorUsuarios();
+        this.monitoradorConsumo = new MonitoradorConsumo();
+        this.processadorImagens = new ProcessadorImagens();
+        // Assume que LoggerSystem é um Singleton e é inicializado (ex: getInstance())
+        this.logger = new LoggerSystem();
+    }
+
+    // Método da Fachada: Cadastrar Usuário [cite: 68]
+    public Usuario cadastrarUsuario(Usuario usuario) {
+        logger.log("Chamada à Fachada: cadastrarUsuario.");
+        // Delega para o Subsistema Usuário/Perfil
+        return gerenciadorUsuarios.cadastrarUsuario(usuario);
+    }
+
+    // Método da Fachada: Monitorar Consumo [cite: 69]
+    public List<Consumo> monitorarConsumo(String idUsuario, Date inicio, Date fim) {
+        logger.log("Chamada à Fachada: monitorarConsumo.");
+        // Delega para o Subsistema Consumo/Alerta
+        return monitoradorConsumo.monitorarConsumo(idUsuario, inicio, fim);
+    }
+
+    // Método da Fachada: Processar Imagens SHA [cite: 70]
+    public void processarImagensSHA(String diretorioImagens) {
+        logger.log("Chamada à Fachada: processarImagensSHA.");
+        // Delega para o Subsistema Processamento de Imagem
+        processadorImagens.processarImagensSHA(diretorioImagens);
+    }
+
+    // **NOTA:** Outros métodos como configurarAlerta() [cite: 70] e os de CRUD de contas/alerta
+    // seriam implementados aqui, delegando para seus respectivos subsistemas.
+}
