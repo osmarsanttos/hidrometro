@@ -1,0 +1,42 @@
+// Subsistema Usuário/Perfil (Sugestão: Builder)
+class GerenciadorUsuarios {
+    public Usuario cadastrarUsuario(Usuario usuario) {
+        System.out.println("Usuário " + usuario.getName() + " cadastrado (Subsistema Usuário/Perfil).");
+        // Lógica de autenticação e persistência (FRF-01, FRF-06)
+        return usuario;
+    }
+}
+
+// Subsistema Consumo/Alerta (Sugestão: Strategy)
+class MonitoradorConsumo {
+    public List<Consumo> monitorarConsumo(String idUsuario, Date inicio, Date fim) {
+        System.out.println("Monitorando consumo para ID " + idUsuario + " (Subsistema Consumo/Alerta).");
+        // Lógica de cálculo, histórico e limites (FRF-02, FRF-03)
+        return new ArrayList<>();
+    }
+}
+
+// Subsistema Processamento de Imagem (Sugestão: Observer, Template Method)
+class ProcessadorImagens {
+    public void processarImagensSHA(String diretorio) {
+        System.out.println("Iniciando processamento OCR das imagens em: " + diretorio + " (FRF-05).");
+        // Notifica Observadores (Consumo/Alerta) após a leitura
+    }
+}
+
+// Subsistema Notificação/Log (Sugestão: Singleton)
+class LoggerSystem {
+    // Implementação Singleton (garante única instância)
+    public void log(String mensagem) {
+        System.out.println("[LOG] " + mensagem); // (RNF-04)
+    }
+}
+
+// Classes de Dados (DTOs Simplificados)
+class Usuario {
+    private String name;
+    public Usuario(String name) { this.name = name; }
+    public String getName() { return name; }
+}
+
+class Consumo {}
