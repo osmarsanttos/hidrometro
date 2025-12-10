@@ -1,0 +1,20 @@
+public class ClientePMH {
+    public static void main(String[] args) {
+        // O cliente interage APENAS com a Fachada, desconhecendo a complexidade interna.
+        FachadaMonitoramento fachada = new FachadaMonitoramento();
+
+        // 1. Cadastro de Usuário
+        Usuario novoUser = new Usuario("Maria da Silva");
+        fachada.cadastrarUsuario(novoUser); // Chama o Subsistema Usuário/Perfil
+
+        // 2. Monitoramento de Consumo (para um período)
+        Date hoje = new Date();
+        Date anoPassado = new Date(hoje.getTime() - 31536000000L); // -1 ano
+        List<Consumo> consumoHistorico = fachada.monitorarConsumo("USER-001", anoPassado, hoje); // Chama o Subsistema Consumo/Alerta
+
+        // 3. Processamento de Imagens
+        fachada.processarImagensSHA("/caminho/para/imagens"); // Chama o Subsistema Processamento de Imagem
+
+        // O cliente não precisa saber como o Logger, GerenciadorUsuarios ou MonitoradorConsumo funcionam internamente.
+    }
+}
